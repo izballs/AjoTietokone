@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>PlayerMid.qml</file>
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>PlayerBot.qml</file>
+        <file>PlayerTop.qml</file>
+        <file>settings.xml</file>
+        <file>SettingsPanel.qml</file>
+        <file>NavigationMid.qml</file>
+        <file>css/youtube.css</file>
+        <file>img/settings.png</file>
+        <file>FuelGauge.qml</file>
+        <file>NavigationTop.qml</file>
+        <file>VKeyboard.qml</file>
+        <file>RouteListDelegate.qml</file>
+        <file>RouteListHeader.qml</file>
+        <file>TopPanel.qml</file>
+        <file>img/hardLeftArrow.png</file>
+        <file>img/hardRightArrow.png</file>
+        <file>img/leftArrow.png</file>
+        <file>img/lightLeftArrow.png</file>
+        <file>img/lightRightArrow.png</file>
+        <file>img/rightArrow.png</file>
+        <file>img/upArrow.png</file>
+        <file>img/uturnLeftArrow.png</file>
+        <file>img/uturnRightArrow.png</file>
+    </qresource>
+</RCC>
