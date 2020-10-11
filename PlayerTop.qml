@@ -10,22 +10,51 @@ Page {
     width: 800;
     height: 480;
     onEnabledChanged: { rek.visible = true;  }
-
+    Column{
+    y: 25
+    width: 50;
+    z: 25
+        Button {
+        width: 50;
+        id: youtube;
+        onClicked: webview.url = "http://m.youtube.com";
+        text: "YOUTUBE";
+        }
+        Button{
+            width: 50;
+        id: nettiradio;
+        onClicked: webview.url = "https://www.supla.fi/live/"
+        text: "NetRadio"
+    }
+        Button {
+            width: 50;
+            enabled: false;
+            id:soundcloud;
+            onClicked: webview.url = "https://m.soundcloud.com/";
+            text: "SoundCloud"
+        }
+    }
     Rectangle{
-        height: 400;
+        x: 50;
+        y: 25
         width: 750;
-        anchors.centerIn: parent;
+        height: 420;
     WebEngineView{
+
         anchors.fill:parent;
         id: webview;
         settings.javascriptEnabled: true;
-        url: "http://www.youtube.com";
+        url: "http://m.youtube.com";
+        profile:  WebEngineProfile{
+                httpUserAgent: "Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36"
+            }
         }
 
 
 
 
         MouseArea {
+        z:0
         anchors.fill: parent;
         hoverEnabled: true
         propagateComposedEvents: true

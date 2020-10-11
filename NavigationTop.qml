@@ -20,11 +20,7 @@ Page {
     anchors.topMargin: 30;
     x: parent.width/2 - width/2;
     color: "transparent";
-    Rectangle {
-        anchors.fill: parent;
-        color: "black";
-        opacity: 0.4
-    }
+
     Column{
     Row{
     Text{
@@ -65,18 +61,19 @@ Page {
     ListView {
         height: 125;
         width: 700;
+        clip: true;
         model: suggestionModel
         delegate: Rectangle{
                 color: "white";
                 opacity: 0.7
-                height: 25;
+                height: 50;
                 border.color: "black";
                 border.width: 0.5;
                 width: parent.width
             Text { text: suggestion; font.pixelSize: 20; }
             MouseArea{
                 anchors.fill: parent;
-                onClicked:{midPageNavigation.search(suggestion); console.log(suggestion)}
+                onClicked:{midPageNavigation.search(suggestion); inputPanel.visible = false; naviView.setCurrentIndex(1); console.log(suggestion)}
             }
         }
     }
@@ -96,7 +93,7 @@ Page {
             when: inputPanel.active
             PropertyChanges {
                 target: inputPanel
-                y: applicationWindow.height - inputPanel.height
+                y: applicationWindow.height - inputPanel.height - 35
             }
         }
         transitions: Transition {

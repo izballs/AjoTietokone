@@ -13,25 +13,16 @@ Page {
         id: settings
         property int volumeState;
     }
+    Bluetooth {
+        id: bluetooth;
+    }
 
     Player {
         id:pplayer
         volumeState: settings.volumeState;
+        Component.onCompleted: this.setState(settings.playerStatus);
     }
-/*
-    Audio {
-        id: mediaPlayer;
-        playlist: Playlist{
-            id:playlist;
-        }
-        onPlaybackStateChanged: {
-            console.log(mediaPlayer.playbackState);
-            if(mediaPlayer.playbackState === 1) pstatus.text="Playing";
-            else if (mediaPlayer.playbackState === 2) pstatus.text="Paused";
-        }
 
-
-    }*/
 Rectangle{
     anchors.left: parent.left;
     anchors.leftMargin: 50;
@@ -112,9 +103,11 @@ Rectangle{
                 font.pixelSize: 16;
                 font.bold: true;
                 id: mediaButton;
+
                 text: "Media"
                 width: 100;
-                onClicked: {pplayer.setState(1); enabled = false; radioButton.enabled = true; bluetoothButton.enabled = true; botPagePlayer.showPlaylist()}
+                onClicked: {pplayer.setState(1); enabled = false; radioButton.enabled = true; bluetoothButton.enabled = true; botPagePlayer.showPlaylist()
+                    playpausebutton.text = "‖";}
                 enabled:{ if(pplayer.getState() === 1)return false; else return true;}
             }
             Button {
@@ -134,7 +127,7 @@ Rectangle{
                 id: bluetoothButton;
                 text: "Bluetooth"
                 width: 100;
-                onClicked: { pplayer.setState(3); enabled = false; mediaButton.enabled = true; radioButton.enabled = true; botPagePlayer.showStationlist(pplayer.getStationList())}
+                onClicked: { bluetooth.loadDevices(); pplayer.setState(3); enabled = false; mediaButton.enabled = true; radioButton.enabled = true; botPagePlayer.showBluetootDevices()}
                 enabled: {if(pplayer.getState() === 3)return false; else return true;}
             }
         }
@@ -165,18 +158,22 @@ Rectangle{
             anchors.centerIn: parent;
             Text{
                 id: pstatus;
+                wrapMode: Text.WrapAnywhere;
+                width: 200;
             }
             Text{
                 id: psong;
-                text: {console.log(pplayer.getTitle()); return pplayer.m_title;}
-
-
+                text: pplayer.m_title;
+                wrapMode: Text.WrapAnywhere;
+                width: 200;
                 font.pixelSize: 16;
             }
             Text{
                 id: partist;
                 text: pplayer.m_author;
                 font.pixelSize: 14
+                wrapMode: Text.WrapAnywhere;
+                width: 200;
             }
         }
 
@@ -198,13 +195,29 @@ Rectangle{
                 id: playpausebutton;
                 text: "►";
                 onClicked: {
-                    if(pplayer.playbackState() !== 1){
-                        pplayer.play();
-                        text = "‖";
-                    }
-                    else{
-                        pplayer.pause();
-                        text = "►";
+                    switch(pplayer.getState()){
+                    case 1:
+                        console.log("State1");
+                        if(pplayer.playbackState() !== 1){
+                            pplayer.play();
+                            text = "‖";
+                        }
+                        else{
+                            pplayer.pause();
+                            text = "►";
+                        }
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        if(pplayer.getBluetoothState() !== 1){
+                            pplayer.playBluetooth();
+                            text = "‖"
+                        }
+                        else{
+                            pplayer.stopBluetooth();
+                            text = "►";
+                        }
                     }
                 }
                 font.bold: true;
@@ -233,6 +246,8 @@ Rectangle{
     function getIndex(ind){
         return pplayer.itemSource(ind);    }
     function nextSong(ind){
+        console.log(ind);
+        console.log("nextSong");
         pplayer.nextSong(ind);
 
     }
@@ -244,9 +259,24 @@ Rectangle{
     function removeSource(index){
         pplayer.removeSource(index);
     }
+    function getState(){
+        return pplayer.getState();
+    }
+
     function addSource(source)
     {
         console.log(source);
         pplayer.setSource(source);
+    }
+
+    function getBluetoothDeviceList(){
+        return bluetooth.listMusicDevices();
+    }
+    function bluetoothDevice(device){
+        pplayer.stopBluetooth();
+        pplayer.playBluetooth(device);
+        psong.text = device.slice(-17);
+        partist.text = "Bluetooth Device";
+        pstatus.text = device.substring(0, device.length-17);
     }
 }

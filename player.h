@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QRadioTuner>
 #include <QMap>
+#include <radio.h>
 
 class Player : public QObject
 {
@@ -55,14 +56,19 @@ public:
  //   Q_INVOKABLE void saveSettings();
 
     // Radio functions
-    Q_INVOKABLE void searchAllStations();
-    Q_INVOKABLE void stationFound(int frequency, QString stationId);
-    Q_INVOKABLE void setStation(QString stationName);
-    Q_INVOKABLE QStringList getStationList();
+    //Q_INVOKABLE void searchAllStations();
+    //Q_INVOKABLE void stationFound(int frequency, QString stationId);
+    //Q_INVOKABLE void setStation(QString stationName);
+    //Q_INVOKABLE QStringList getStationList();
 
     Q_INVOKABLE int getState();
 
     Q_INVOKABLE void setState(int state);
+    Q_INVOKABLE void playBluetooth(QString device);
+    Q_INVOKABLE void stopBluetooth();
+    Q_INVOKABLE int getBluetoothState();
+
+
 signals:
     void titleChanged(QString title);
     void authorChanged(QString author);
@@ -78,7 +84,7 @@ private:
     QMediaPlayer *m_player = nullptr;
     QMediaPlaylist *m_playlists = nullptr;
 
-    QRadioTuner *m_radio = nullptr;
+    Radio *m_radio = nullptr;
     QMap<int, QString> stationList;
 
     QString m_title;
@@ -86,6 +92,7 @@ private:
 
     int volumeState;
     int m_state;
+    int m_bluetoothState;
 
 };
 

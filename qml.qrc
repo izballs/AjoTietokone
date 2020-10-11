@@ -1,30 +1,41 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>PlayerMid.qml</file>
-        <file>main.qml</file>
-        <file>qtquickcontrols2.conf</file>
-        <file>PlayerBot.qml</file>
-        <file>PlayerTop.qml</file>
-        <file>settings.xml</file>
-        <file>SettingsPanel.qml</file>
-        <file>NavigationMid.qml</file>
-        <file>css/youtube.css</file>
-        <file>img/settings.png</file>
+        <file>bluetoothView.qml</file>
+        <file>displayView.qml</file>
         <file>FuelGauge.qml</file>
+        <file>informationView.qml</file>
+        <file>NavigationMid.qml</file>
         <file>NavigationTop.qml</file>
-        <file>VKeyboard.qml</file>
+        <file>networkView.qml</file>
+        <file>NoticePopup.qml</file>
+        <file>Page2Form.ui.qml</file>
+        <file>PlayerBot.qml</file>
+        <file>PlayerMid.qml</file>
+        <file>PlayerTop.qml</file>
         <file>RouteListDelegate.qml</file>
         <file>RouteListHeader.qml</file>
+        <file>SettingsPanel.qml</file>
         <file>TopPanel.qml</file>
+        <file>img/bluetooth.png</file>
+        <file>img/display.png</file>
         <file>img/hardLeftArrow.png</file>
         <file>img/hardRightArrow.png</file>
+        <file>img/information.png</file>
+        <file>img/Keyboard.qml</file>
         <file>img/leftArrow.png</file>
         <file>img/lightLeftArrow.png</file>
         <file>img/lightRightArrow.png</file>
+        <file>img/network.png</file>
         <file>img/rightArrow.png</file>
+        <file>img/settings.png</file>
         <file>img/upArrow.png</file>
         <file>img/uturnLeftArrow.png</file>
         <file>img/uturnRightArrow.png</file>
+        <file>img/centerMap.png</file>
+        <file>img/positionIndicator.png</file>
+        <file>KeyPad.qml</file>
+        <file>img/navigation.png</file>
+        <file>navigationSettings.qml</file>
     </qresource>
 </RCC>

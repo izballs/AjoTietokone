@@ -13,17 +13,28 @@ Page {
     onEnabledChanged: { rek.visible = true;  }
     property variant plugin: mapPlugin
 
+    Mygps{
+        id:mygps;
+        property double distance;
+        onCoordinateChanged: {
+
+        }
+
+    }
+
     ListModel { id: routeInfoModel }
 
     Rectangle {
         anchors.centerIn: parent;
-        width: 700;
-        height: 400;
+        width: 650;
+        height: 380;
 
         Plugin {
             id: mapPlugin
             name: "here" // "mapboxgl", "esri", ...
             // specify plugin parameters if necessary
+            locales: "fi_FI";
+
             PluginParameter {
                  name: "here.app_id"
                  value: "SwbtTZh9fPu7H6dReGXg"
@@ -34,6 +45,11 @@ Page {
             }
         }
 
+        PositionSource {
+            onPositionChanged: {
+                map.center = mygps.m_coordinate;
+            }
+        }
 
         Map {
                 id: map
@@ -41,6 +57,7 @@ Page {
                 plugin: mapPlugin
                 center: fromCoordinate // Oslo
                 zoomLevel: 14
+
 
                 property variant fromCoordinate: QtPositioning.coordinate(62.7562402,22.8692497,17)
                 property variant toCoordinate: QtPositioning.coordinate(63.8372805,23.139854,17)
@@ -51,15 +68,56 @@ Page {
                     anchors.leftMargin: 100;
                     width: parent.width - 200;
                     height: 25;
+                    z: 25;
                     color: "gray";
                     Text{
                         anchors.centerIn: parent;
                         id: routeInfo;
+                        font.pixelSize: 14;
                         text: routeInfoModel.get(0).instruction;
                     }
                 }
 
+
+                MapQuickItem {
+
+                    id:positionIndicator;
+                    anchorPoint.x: 24;
+                    anchorPoint.y: 16;
+                    sourceItem:
+                        Image {
+                            id: positionImage
+                            source: "img/positionIndicator.png";
+                            width: 35;
+                            height: 35;
+                        }
+                    coordinate: mygps.m_coordinate;
+                }
+
                 Rectangle{
+                    id: centerMap;
+                    color: "transparent";
+                    height: 40;
+                    width: 40;
+                    z:50;
+                    x:parent.width - width;
+                    y:parent.height - height - directions.height;
+                    Image {
+                        source: "img/centerMap.png";
+                        width: 40;
+                        height: 40;
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked:{ map.center = mygps.m_coordinate; console.log("Centering");
+                                    }
+                    }
+                }
+
+
+                Rectangle{
+                    id: directions
                     anchors.right:parent.right;
                     anchors.bottom: parent.bottom;
                     width: 100;
@@ -99,22 +157,6 @@ Page {
                     }
                 }
 
-
-                Address {
-                    id :fromAddress
-                    street: "Närelenkki 28"
-                    city: ""
-                    country: "Finland"
-                    state : ""
-                    postalCode: ""
-
-                }
-
-                GeocodeModel {
-                    id: fromModel;
-                    plugin: map.plugin;
-                }
-
                 GeocodeModel {
                     id: toModel;
                     plugin: map.plugin;
@@ -125,25 +167,59 @@ Page {
                     id: mapQuery;
                     travelModes: RouteQuery.CarTravel
                 }
+                Location {
+                    id: lastM_c;
+                }
+
+                Timer {
+                    id:instructionTimer;
+                    interval: 2000; running: false; repeat: true;
+                    property int max;
+                    property int current: 0;
+                    property int dis: 0;
+                    onTriggered:{
+                        var path = routeModel.get(0).path;
+                        max = path.length;
+                        if(lastM_c.coordinate !== null){
+                            dis += mygps.calculateDistance(mygps.m_coordinate, lastM_c.coordinate);
+                        }
+                        console.log("dis=" + dis);
+                        console.log("routemodel.current=" + routeInfoModel.get(routeModel.current).distance)
+                        lastM_c.coordinate = mygps.m_coordinate;
+                        var distance = mygps.calculateDistance(mygps.m_coordinate, path[current])
+                        var distanceTO = routeInfoModel.get(routeModel.current).distance - dis;
+                        directionMeters.text = distanceTO.toFixed(0) + "m";
+                        if(distance <= 30){
+                            current++;
+                            if(current === max)
+                                instructionTimer.stop();
+                        }
+                        if((routeInfoModel.get(routeModel.current).distance - dis) <= 20){
+                            routeModel.current++;
+                        }
+
+                    }
+                }
 
                 RouteModel {
                      id: routeModel
                      plugin: mapPlugin;
                      query: mapQuery;
-                     autoUpdate: true;
+                     autoUpdate: false;
+                     property int current: 0;
                      onStatusChanged: {
                          if (status == RouteModel.Ready) {
                          switch(status){
                          case 0:
                              break;
                          case 1:
-                             console.log(routeModel.get(0).segments.length);
+                             console.log(routeModel.get(current).segments.length);
                              map.showRouteList();
-                             console.log(routeInfoModel.get(0));
+                             console.log(routeInfoModel.get(current));
 
-                             routeInfo.text = routeInfoModel.get(0).instruction
-                             directionMeters.text = routeInfoModel.get(0).distance
-                             switch(routeInfoModel.get(1).direction){
+                             routeInfo.text = routeInfoModel.get(current).instruction
+                             directionMeters.text = routeInfoModel.get(current).distance
+                             switch(routeInfoModel.get(current+1).direction){
                              case 0:
                                  break;
                              case 1:
@@ -206,12 +282,13 @@ Page {
                          opacity: 0.8
                      }
                  }
-                MouseArea {
-                    anchors.fill: parent;
-                    hoverEnabled: true
-                    onEntered: { console.log("pressed"); mainView.interactive = false; naviView.interactive = false; }
-                    onExited: { console.log("released"); mainView.interactive = true; naviView.interactive = true; }
-                }
+                 MouseArea {
+                     anchors.fill: parent;
+                     hoverEnabled: true
+                     onEntered: { console.log("pressed"); mainView.interactive = false; naviView.interactive = false; }
+                     onExited: { console.log("released"); mainView.interactive = true; naviView.interactive = true; }
+             }
+
             }
 
     }
@@ -225,20 +302,24 @@ Page {
             onTriggered: mapQ()
             function mapQ(){
                 mapQuery.clearWaypoints()
-                mapQuery.addWaypoint(fromModel.get(0).coordinate)
+                console.log("ASD");
+                console.log(mygps.m_coordinate);
+                mapQuery.addWaypoint(mygps.m_coordinate)
                 mapQuery.addWaypoint(toModel.get(0).coordinate)
 
-                map.center = fromModel.get(0).coordinate
+                routeModel.update();
+                map.center = mygps.m_coordinate
+                mygps.stopReading();
             }
     }
 
+
 function search(suggestion){
+    mygps.startReading();
     toModel.query = suggestion;
     toModel.update();
-    fromModel.query = "Närelenkki 28, Seinäjoki, Finland"
-    fromModel.update();
     naviTimer.start();
-
+    instructionTimer.start();
 }
 
 }

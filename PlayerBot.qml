@@ -55,7 +55,7 @@ Page {
 
     ListView {
        x:100
-       height: 400;
+       height: 380;
        width: 600;
        clip: true
         orientation: Qt.Vertical
@@ -64,25 +64,55 @@ Page {
         interactive: true
         focus: true;
         id: list;
+        Component.onCompleted:{ switch(midPagePlayer.getState()){
+                               case 0:
+                                   console.log("case 0");
+                                   break;
+                               case 1:
+                                   console.log("case 1");
+                                   showPlaylist();
+                                   break;
+                               case 2:
+                                   console.log("case 2");
+                                   showStationlist();
+                                   break;
+                               case 3:
+                                   console.log("case 3");
+                                   showBluetootDevices();
+                                   break;
+                               }}
         delegate: ItemDelegate {
                     background.opacity: 0.3;
                     width: 600;
+                    Row{
                     Text{
-                        text: index + ". ";
+                        color: "white";
+                        text: index + ".  ";
                     }
                     Text{
+                        color: "white";
                         font.pixelSize: 14;
                         x:20
-                        text: { var str = modelData;
+                        text: { switch(midPagePlayer.getState()){
+                            case 1:
+                                var str = modelData;
                                 var st = str.toString();
                                 var strr = st.split("/");
                                 var count = strr.length;
                                 var dr = strr[count-2];
                                 dr = dr + " " + strr[count-1];
                                 return dr;
+                            case 3:
+                                return modelData;
+                            }
                         }
                     }
-                    onClicked:midPagePlayer.nextSong(index);
+                    }
+                    onClicked:
+                        switch(midPagePlayer.getState()){
+                        case 3: return midPagePlayer.bluetoothDevice(modelData);
+                        default: return midPagePlayer.nextSong(index);
+                        }
             }
     }
 
@@ -94,11 +124,15 @@ Page {
             str.push(midPagePlayer.getIndex(i));
         }
     list.model = str;
-
     }
 
     function showStationlist(stations){
         list.model = stations;
     }
-
+    function showBluetootDevices(){
+        var listSTR = midPagePlayer.getBluetoothDeviceList();
+        list.model = listSTR;
+        console.log("listSTR");
+        console.log(listSTR);
+    }
 }

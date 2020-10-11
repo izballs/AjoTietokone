@@ -1,8 +1,11 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import Qt.labs.folderlistmodel 2.1
+import PLAYER 1.0
 
 Item {
+    width: parent.width;
+    height: parent.height;
 Popup {
     id:settings;
     width: 600
@@ -11,50 +14,114 @@ Popup {
     focus: true;
     x: parent.width/2 - width/2;
     y: parent.height/2 - height/2;
-    Column{
-        ComboBox {
-            id: wallpaperInput;
-            currentIndex: 0;
-            textRole: "fileName";
-            displayText: currentText;
-            model: FolderListModel {
-                    folder: "file:///home/izba/Pictures/wallpapers/";
-                    nameFilters: ["*.jpg", "*.png"]
-                }
-            delegate: ItemDelegate{
-                    text: fileName;
-            }
-            }
-    Rectangle{
-
-        Text{
-            text: "Bluetooth Settings"
-        }
-        ListView{
-            id: pairedList
-        }
-
+    property int panel: 0;
+    background: Rectangle{
+        anchors.fill: parent;
+        color: "lightgray";
     }
 
-    Row{
+    Row {
+        y: parent.parent.height - parent.height - height;
         Button {
-            id: saveSettings;
-            text: "Save";
-            onClicked: {settingsComp.wallpaper = "file:///home/izba/Pictures/wallpapers/" + wallpaperInput.currentText; console.log(wallpaperInput.currentText); settings.close();}
+            id: display;
+            width: 50;
+            height: 50;
+            Image {
+                width: 40;
+                height: 40;
+                anchors.fill: parent;
+                source: "img/display.png";
+                fillMode: Image.PreserveAspectFit;
+            }
+            onClicked: { sv.replace("displayView.qml");}
         }
         Button {
-            id: cancelSettings;
-            text: "Cancel";
-            onClicked: settings.close();
+            id: network;
+            width: 50;
+            height: 50;
+            onClicked: { sv.replace("networkView.qml"); console.log(sv.depth)}
+            Image {
+                width: 40;
+                height: 40;
+            anchors.centerIn: parent;
+            source: "img/network.png";
+            fillMode: Image.PreserveAspectFit;
+
+        }
+        }
+        Button {
+            id: bluetooth;
+            width: 50;
+            height: 50;
+            onClicked: {sv.replace("bluetoothView.qml"); console.log(sv.depth)}
+            Image {
+                width: 40;
+                height: 40;
+            anchors.centerIn: parent;
+            source: "img/bluetooth.png";
+            fillMode: Image.PreserveAspectFit;
+
+        }
+        }
+        Button {
+            id: navigation;
+            width: 50;
+            height: 50;
+            onClicked: {sv.replace("navigationSettings.qml"); console.log(sv.depth)}
+            Image {
+            width: 40;
+            height: 40;
+            anchors.centerIn: parent;
+            source: "img/navigation.png";
+            fillMode: Image.PreserveAspectFit;
+
+        }
+        }
+        Button {
+            id: about;
+            width: 50;
+            height: 50;
+            onClicked: {sv.replace("informationView.qml"); console.log(sv.depth)}
+            Image {
+            width: 40;
+            height: 40;
+            anchors.centerIn: parent;
+            source: "img/information.png";
+            fillMode: Image.PreserveAspectFit;
+
+        }
         }
     }
+StackView {
+    id: sv;
+
+    anchors.fill: parent;
+    initialItem: "displayView.qml";
+    replaceEnter:  Transition {
+
+        PropertyAnimation {
+            property: "opacity"
+            from: 0
+            to:1
+            duration: 200
+        }
     }
 
+    replaceExit: Transition {
+        PropertyAnimation {
+            property: "opacity"
+            from: 1
+            to:0
+            duration: 200
+        }
+
+}
+}
 }
 Rectangle {
     id: controlPanel;
     width: applicationWindow.width;
-    height: 25
+    height: 35
     visible: true;
     z: 10;
     y: applicationWindow.height-height;
@@ -68,11 +135,11 @@ Rectangle {
     Row{
         spacing: 20
     RoundButton{
-        height: 24;
-        width: 24;
+        height: 34;
+        width: 34;
         Image {
-            width: 20;
-            height: 20;
+            width: 30;
+            height: 30;
             anchors.centerIn: parent;
             source: "img/settings.png";
             fillMode: Image.PreserveAspectFit;
@@ -85,12 +152,12 @@ Rectangle {
         id: fanSpeed;
         from: 0
         width: 150;
-        height: 25;
+        height: 34;
         to: items.length-1;
         up.indicator: Rectangle{
             color:"gray";
-            width: 40;
-            height: 25;
+            width: 34;
+            height: 34;
             x:110;
             Text{
                 text:"+";
@@ -105,8 +172,8 @@ Rectangle {
         }
         down.indicator: Rectangle{
             color:"gray";
-            width: 40;
-            height: 25;
+            width: 34;
+            height: 34;
             x:0
             Text{
                 anchors.centerIn: parent;
@@ -144,11 +211,12 @@ Rectangle {
 
         to: items.length-1;
         width: 150;
-        height: 25;
+        height: 34;
+
         up.indicator: Rectangle{
             color:"gray";
-            width: 40;
-            height: 25;
+            width: 34;
+            height: 34;
             x:108;
             Text{
                 text:"+";
@@ -163,8 +231,8 @@ Rectangle {
         }
         down.indicator: Rectangle{
             color:"gray";
-            width: 40;
-            height: 25;
+            width: 34;
+            height: 34;
             x:0
             Text{
                 anchors.centerIn: parent;
@@ -195,12 +263,13 @@ Rectangle {
         }
     }
     RoundButton{
-        height: 24;
-        width: 24;
+        height: 35;
+        width: 35;
         Text{
             x: parent.width/2-width/2;
             y: parent.height/2-height/2;
             text: "AC";
+            font.pixelSize: 20;
             color: applicationWindow.ac?"green":"black";
         }
         onClicked: {
@@ -209,13 +278,14 @@ Rectangle {
     }
 
     Text{
+        y: parent.height / 2 - height / 2;
         text: "Speed: "
-        font.pixelSize: 16;
+        font.pixelSize: 20;
     }
     Text{
-
+        y: parent.height / 2 - height / 2;
         text: "0 km/h"
-        font.pixelSize: 16;
+        font.pixelSize: 20;
         font.bold: true;
     }
 
