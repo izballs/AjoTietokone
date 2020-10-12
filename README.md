@@ -29,4 +29,5 @@ Käyttöliittymä toimii pyyhkäisy eleillä ja onkin suunniteltu kosketusnäytt
 |____________|____________|____________|
 ```
 ![MediaMenu](https://izba.ovh/img/AjoTietokoneMediaMenu.gif)  
+![NavigationMenu](https://izba.ovh/img/AjoTietokoneNavigationMenu.gif)  
 ![Settings](https://izba.ovh/img/AjoTietokoneSettings.gif)
