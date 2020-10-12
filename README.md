@@ -4,7 +4,8 @@ Tarkoituksena luoda raspberry pi:llä autoon radion tilalle käyttöliittymä au
 ## Käyttöliittymän rakenne
 
 Käyttöliittymä toimii pyyhkäisy eleillä ja onkin suunniteltu kosketusnäyttö mielessä.
-'''
+
+```
  ____________ ____________ ____________
 |------------|------------|------------|
 |-Navigointi-|-NettiRadiot|------------|
@@ -26,6 +27,6 @@ Käyttöliittymä toimii pyyhkäisy eleillä ja onkin suunniteltu kosketusnäytt
 |-Sijainnit--|------------|------------|
 |------------|------------|------------|
 |____________|____________|____________|
-'''
+```
 ![Menu](https://izba.ovh/img/AjoTietokoneMenu.gif)  
-![Menu](https://izba.ovh/img/AjoTietokoneSettings.gif)
+![Settings](https://izba.ovh/img/AjoTietokoneSettings.gif)
